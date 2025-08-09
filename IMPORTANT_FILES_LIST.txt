@@ -1,0 +1,88 @@
+# Liste des fichiers les plus importants à télécharger
+
+## Fichiers essentiels (à télécharger en priorité) :
+
+### 1. Interface principale
+src/app/page.tsx - L'interface complète avec toutes les améliorations
+
+### 2. Animations et styles
+src/styles/animations.css - Toutes les animations CSS personnalisées
+src/app/layout.tsx - Layout qui importe les animations
+src/app/globals.css - Styles globaux
+
+### 3. Composants clés
+src/components/memory/MemoryManager.tsx - Système de mémoire
+src/components/auth/AuthModal.tsx - Authentification
+
+### 4. Services et logique métier
+src/lib/ai-service.ts - Service IA principal
+src/lib/ai-service-client.ts - Client IA
+src/lib/memory-service.ts - Service de mémoire
+src/lib/websocket-manager.ts - Gestionnaire WebSocket
+src/lib/socket.ts - Configuration Socket.IO
+
+### 5. Hooks personnalisés
+src/hooks/useAuth.ts - Authentification
+src/hooks/useWebSocket.ts - Communication WebSocket
+
+### 6. Configuration
+package.json - Dépendances du projet
+tailwind.config.js - Configuration Tailwind
+tsconfig.json - Configuration TypeScript
+prisma/schema.prisma - Base de données
+
+### 7. Données
+src/data/styles-ia.ts - Styles d'IA (CSV converti)
+
+## Instructions de téléchargement :
+
+### Méthode 1: Téléchargement manuel (un par un)
+1. Copiez le contenu de chaque fichier listé ci-dessus
+2. Créez la même structure de dossiers sur votre machine
+3. Collez le contenu dans les fichiers correspondants
+
+### Méthode 2: Utiliser un client FTP
+1. Connectez-vous à votre client FTP
+2. Créez la structure de dossiers comme ci-dessus
+3. Téléchargez tous les fichiers listés
+
+### Méthode 3: Archive (si possible)
+Si vous pouvez exécuter des commandes :
+```bash
+# Créez une archive
+tar -czf project-backup.tar.gz src/ package.json tailwind.config.js tsconfig.json prisma/
+
+# Téléchargez l'archive via SFTP ou autre méthode
+```
+
+## Après le téléchargement :
+
+### 1. Installer les dépendances
+```bash
+npm install
+```
+
+### 2. Configurer la base de données
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 3. Créer le fichier .env.local
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=votre_cle
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=votre_domaine
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=votre_projet_id
+DATABASE_URL="file:./dev.db"
+NEXT_PUBLIC_WS_URL="ws://localhost:3000/api/socketio"
+```
+
+### 4. Lancer le projet
+```bash
+npm run dev
+```
+
+## Note importante :
+- Le dossier `src/components/ui/` contient de nombreux fichiers UI nécessaires
+- Ne pas oublier les fichiers de configuration dans le dossier `prisma/`
+- Les dossiers `node_modules/` et `.git/` peuvent être exclus (générés automatiquement)

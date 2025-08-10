@@ -17,6 +17,7 @@ import AuthModal from '@/components/auth/AuthModal'
 import MemoryManager from '@/components/memory/MemoryManager'
 import LedBanner from '@/components/led-banner/LedBanner'
 import LedBannerSettings from '@/components/led-banner/LedBannerSettings'
+import FormDebug from '@/components/debug/FormDebug'
 
 interface Agent {
   id: string
@@ -350,6 +351,7 @@ export default function MatrixInterface() {
     timestamp: new Date()
   })
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showDebugForm, setShowDebugForm] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null)
   const [aiServiceInitialized, setAiServiceInitialized] = useState(false)
@@ -718,15 +720,25 @@ export default function MatrixInterface() {
                 </div>
                 
                 {user.isAdmin && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-green-400 hover:text-green-300 hover:bg-green-500/10"
-                    onClick={() => window.location.href = '/admin'}
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Admin
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-green-400 hover:text-green-300 hover:bg-green-500/10"
+                      onClick={() => window.location.href = '/admin'}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Admin
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10"
+                      onClick={() => setShowDebugForm(!showDebugForm)}
+                    >
+                      🔧 Debug
+                    </Button>
+                  </>
                 )}
                 
                 <Button
@@ -1026,7 +1038,7 @@ export default function MatrixInterface() {
         {/* Right Column - System Metrics & Memory */}
         <div className="col-span-3 bg-black/60 backdrop-blur-md border border-green-500/30 rounded-lg p-4">
           <Tabs defaultValue="metrics" className="h-full">
-            <TabsList className="grid w-full grid-cols-3 bg-black/40 border-green-500/30">
+            <TabsList className="grid w-full grid-cols-4 bg-black/40 border-green-500/30">
               <TabsTrigger value="metrics" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Métriques
               </TabsTrigger>
@@ -1035,6 +1047,9 @@ export default function MatrixInterface() {
               </TabsTrigger>
               <TabsTrigger value="led-settings" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Bannière LED
+              </TabsTrigger>
+              <TabsTrigger value="debug" className="text-yellow-400 data-[state=active]:bg-yellow-500/20">
+                🔧 Debug
               </TabsTrigger>
             </TabsList>
             
@@ -1139,6 +1154,13 @@ export default function MatrixInterface() {
                 onConfigChange={updateLedConfig}
                 onSave={saveLedConfig}
               />
+            </TabsContent>
+            
+            <TabsContent value="debug" className="mt-0 h-[calc(100vh-180px)]">
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold text-yellow-400 mb-4 tracking-wider">DÉBOGAGE</h2>
+                <FormDebug />
+              </div>
             </TabsContent>
           </Tabs>
         </div>

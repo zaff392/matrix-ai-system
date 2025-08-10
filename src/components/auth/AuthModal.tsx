@@ -53,9 +53,20 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   if (!isOpen) return null
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    console.log(`🔧 handleInputChange appelé: field=${field}, value=${value}`)
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value }
+      console.log(`📝 Nouvel état du formulaire:`, newData)
+      return newData
+    })
     setError('')
     setSuccess('')
+  }
+
+  const handleInputBlur = (field: string, value: string) => {
+    console.log(`🔍 handleInputBlur appelé: field=${field}, value=${value}`)
+    // Forcer la mise à jour de l'état au cas où le navigateur aurait modifié la valeur
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -188,7 +199,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           {/* Reset Password Mode */}
           {resetMode ? (
-            <form onSubmit={handleResetPassword} className="space-y-4">
+            <form onSubmit={handleResetPassword} className="space-y-4" autoComplete="off">
               <div>
                 <label className="block text-sm font-medium text-green-400 mb-2">
                   Email
@@ -197,6 +208,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                   <Input
                     type="email"
+                    name="reset-email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder="Entrez votre email"
@@ -236,7 +248,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
               {/* Login Tab */}
               <TabsContent value="login" className="space-y-4">
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4" autoComplete="off">
                   <div>
                     <label className="block text-sm font-medium text-green-400 mb-2">
                       Email
@@ -337,7 +349,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
               {/* Register Tab */}
               <TabsContent value="register" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
+                <form onSubmit={handleSignUp} className="space-y-4" autoComplete="off">
                   <div>
                     <label className="block text-sm font-medium text-green-400 mb-2">
                       Nom d'affichage

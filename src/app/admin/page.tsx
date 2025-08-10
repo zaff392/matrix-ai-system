@@ -26,17 +26,24 @@ import {
   ArrowLeft,
   Crown,
   Brain,
+<<<<<<< HEAD
   Bot,
   Zap,
   Sparkles
+=======
+  Bot
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import LikejustManager from '@/components/admin/LikejustManager'
 import AgentsManager from '@/components/admin/AgentsManager'
+<<<<<<< HEAD
 import UserManager from '@/components/admin/UserManager'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 import BannerManager from '@/components/admin/BannerManager'
 import LikeJustStyleSelector from '@/components/admin/LikeJustStyleSelector'
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
 interface ApiKey {
   id: string
@@ -59,11 +66,17 @@ interface User {
 }
 
 export default function AdminPage() {
+<<<<<<< HEAD
   const { user, logout, loading: authLoading } = useAuth()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const [error, setError] = useState<string | null>(null)
+=======
+  const { user, logout } = useAuth()
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('api-keys')
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([
     {
       id: '1',
@@ -124,6 +137,7 @@ export default function AdminPage() {
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
+<<<<<<< HEAD
     const checkAuth = async () => {
       try {
         // Attendre que l'authentification soit chargée
@@ -143,6 +157,12 @@ export default function AdminPage() {
 
     checkAuth()
   }, [user, authLoading, router])
+=======
+    if (!user || !user.isAdmin) {
+      router.push('/')
+    }
+  }, [user, router])
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
   const toggleApiKeyVisibility = (keyId: string) => {
     setShowKeys(prev => ({
@@ -193,6 +213,7 @@ export default function AdminPage() {
     })
   }
 
+<<<<<<< HEAD
   // Afficher un loader pendant la vérification de l'authentification
   if (authLoading || isCheckingAuth) {
     return (
@@ -226,6 +247,8 @@ export default function AdminPage() {
   }
 
   // Rediriger si l'utilisateur n'est pas admin
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
   if (!user || !user.isAdmin) {
     return (
       <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center">
@@ -296,6 +319,7 @@ export default function AdminPage() {
       <div className="relative z-10 p-6">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+<<<<<<< HEAD
             <TabsList className="grid w-full grid-cols-9 bg-black/60 border border-green-500/30">
               <TabsTrigger value="dashboard" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Activity className="w-4 h-4" />
@@ -305,6 +329,9 @@ export default function AdminPage() {
                 <Zap className="w-4 h-4" />
                 Bannière
               </TabsTrigger>
+=======
+            <TabsList className="grid w-full grid-cols-6 bg-black/60 border border-green-500/30">
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
               <TabsTrigger value="api-keys" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Key className="w-4 h-4" />
                 Clés API
@@ -321,10 +348,13 @@ export default function AdminPage() {
                 <Bot className="w-4 h-4" />
                 Agents
               </TabsTrigger>
+<<<<<<< HEAD
               <TabsTrigger value="likejust-style" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Sparkles className="w-4 h-4" />
                 LikeJust Style
               </TabsTrigger>
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
               <TabsTrigger value="system" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Activity className="w-4 h-4" />
                 Système
@@ -335,6 +365,7 @@ export default function AdminPage() {
               </TabsTrigger>
             </TabsList>
 
+<<<<<<< HEAD
             {/* Dashboard Tab */}
             <TabsContent value="dashboard" className="space-y-6">
               <AdminDashboard currentUserId={user?.uid} />
@@ -345,6 +376,8 @@ export default function AdminPage() {
               <BannerManager />
             </TabsContent>
 
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
             {/* API Keys Tab */}
             <TabsContent value="api-keys" className="space-y-6">
               <Card className="bg-black/60 backdrop-blur-md border border-green-500/30 p-6">
@@ -476,7 +509,74 @@ export default function AdminPage() {
 
             {/* Users Tab */}
             <TabsContent value="users" className="space-y-6">
+<<<<<<< HEAD
               <UserManager currentUserId={user?.uid} />
+=======
+              <Card className="bg-black/60 backdrop-blur-md border border-green-500/30 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-green-400">Gestion des Utilisateurs</h2>
+                  <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                    {users.filter(u => u.isActive).length} actifs
+                  </Badge>
+                </div>
+
+                <ScrollArea className="h-96">
+                  <div className="space-y-3">
+                    {users.map((userItem) => (
+                      <Card key={userItem.id} className="bg-black/40 border border-green-500/20 p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarFallback className="bg-green-500/20 text-green-400">
+                                {userItem.displayName[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-green-400">{userItem.displayName}</h4>
+                                <Badge 
+                                  className={`${
+                                    userItem.role === 'admin' 
+                                      ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+                                      : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                                  }`}
+                                >
+                                  {userItem.role === 'admin' ? 'Admin' : 'Utilisateur'}
+                                </Badge>
+                                <Badge 
+                                  className={`${
+                                    userItem.isActive 
+                                      ? 'bg-green-500/20 text-green-400 border-green-500/30' 
+                                      : 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                                  }`}
+                                >
+                                  {userItem.isActive ? 'Actif' : 'Inactif'}
+                                </Badge>
+                              </div>
+                              <div className="text-sm text-green-600">{userItem.email}</div>
+                              <div className="text-xs text-green-600">
+                                Créé le {formatDate(userItem.createdAt)}
+                                {userItem.lastLogin && (
+                                  <span> • Dernière connexion {formatDate(userItem.lastLogin)}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" className="text-green-400 hover:text-green-300">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </Card>
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
             </TabsContent>
 
             {/* Likejust Tab */}
@@ -489,11 +589,14 @@ export default function AdminPage() {
               <AgentsManager />
             </TabsContent>
 
+<<<<<<< HEAD
             {/* LikeJust Style Tab */}
             <TabsContent value="likejust-style" className="space-y-6">
               <LikeJustStyleSelector />
             </TabsContent>
 
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
             {/* System Tab */}
             <TabsContent value="system" className="space-y-6">
               <Card className="bg-black/60 backdrop-blur-md border border-green-500/30 p-6">

@@ -53,22 +53,29 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   if (!isOpen) return null
 
   const handleInputChange = (field: string, value: string) => {
+<<<<<<< HEAD
     console.log(`🔧 handleInputChange appelé: field=${field}, value=${value}`)
     setFormData(prev => {
       const newData = { ...prev, [field]: value }
       console.log(`📝 Nouvel état du formulaire:`, newData)
       return newData
     })
+=======
+    setFormData(prev => ({ ...prev, [field]: value }))
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
     setError('')
     setSuccess('')
   }
 
+<<<<<<< HEAD
   const handleInputBlur = (field: string, value: string) => {
     console.log(`🔍 handleInputBlur appelé: field=${field}, value=${value}`)
     // Forcer la mise à jour de l'état au cas où le navigateur aurait modifié la valeur
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -199,7 +206,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           {/* Reset Password Mode */}
           {resetMode ? (
+<<<<<<< HEAD
             <form onSubmit={handleResetPassword} className="space-y-4" autoComplete="off">
+=======
+            <form onSubmit={handleResetPassword} className="space-y-4">
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
               <div>
                 <label className="block text-sm font-medium text-green-400 mb-2">
                   Email
@@ -208,11 +219,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                   <Input
                     type="email"
+<<<<<<< HEAD
                     name="reset-email"
                     autoComplete="off"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     onBlur={(e) => handleInputBlur('email', e.target.value)}
+=======
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                     placeholder="Entrez votre email"
                     className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10"
                     required
@@ -250,7 +266,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
               {/* Login Tab */}
               <TabsContent value="login" className="space-y-4">
+<<<<<<< HEAD
                 <form onSubmit={handleLogin} className="space-y-4" autoComplete="off">
+=======
+                <form onSubmit={handleLogin} className="space-y-4">
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                   <div>
                     <label className="block text-sm font-medium text-green-400 mb-2">
                       Email
@@ -259,11 +279,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                       <Input
                         type="email"
+<<<<<<< HEAD
                         name="login-email"
                         autoComplete="off"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         onBlur={(e) => handleInputBlur('email', e.target.value)}
+=======
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                         placeholder="Entrez votre email"
                         className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10"
                         required
@@ -279,11 +304,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                       <Input
                         type={showPassword ? 'text' : 'password'}
+<<<<<<< HEAD
                         name="login-password"
                         autoComplete="off"
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         onBlur={(e) => handleInputBlur('password', e.target.value)}
+=======
+                        value={formData.password}
+                        onChange={(e) => handleInputChange('password', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                         placeholder="Entrez votre mot de passe"
                         className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10 pr-10"
                         required
@@ -357,7 +387,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
               {/* Register Tab */}
               <TabsContent value="register" className="space-y-4">
+<<<<<<< HEAD
                 <form onSubmit={handleSignUp} className="space-y-4" autoComplete="off">
+=======
+                <form onSubmit={handleSignUp} className="space-y-4">
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                   <div>
                     <label className="block text-sm font-medium text-green-400 mb-2">
                       Nom d'affichage
@@ -366,11 +400,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                       <Input
                         type="text"
+<<<<<<< HEAD
                         name="register-name"
                         autoComplete="off"
                         value={formData.displayName}
                         onChange={(e) => handleInputChange('displayName', e.target.value)}
                         onBlur={(e) => handleInputBlur('displayName', e.target.value)}
+=======
+                        value={formData.displayName}
+                        onChange={(e) => handleInputChange('displayName', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                         placeholder="Entrez votre nom"
                         className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10"
                         required
@@ -386,11 +425,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                       <Input
                         type="email"
+<<<<<<< HEAD
                         name="register-email"
                         autoComplete="off"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         onBlur={(e) => handleInputBlur('email', e.target.value)}
+=======
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                         placeholder="Entrez votre email"
                         className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10"
                         required
@@ -406,11 +450,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                       <Input
                         type={showPassword ? 'text' : 'password'}
+<<<<<<< HEAD
                         name="register-password"
                         autoComplete="off"
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         onBlur={(e) => handleInputBlur('password', e.target.value)}
+=======
+                        value={formData.password}
+                        onChange={(e) => handleInputChange('password', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                         placeholder="Entrez votre mot de passe"
                         className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10 pr-10"
                         required
@@ -435,11 +484,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-600" />
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
+<<<<<<< HEAD
                         name="register-confirm-password"
                         autoComplete="off"
                         value={formData.confirmPassword}
                         onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                         onBlur={(e) => handleInputBlur('confirmPassword', e.target.value)}
+=======
+                        value={formData.confirmPassword}
+                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                         placeholder="Confirmez votre mot de passe"
                         className="bg-black/40 border-green-500/30 text-green-400 placeholder-green-600 pl-10 pr-10"
                         required

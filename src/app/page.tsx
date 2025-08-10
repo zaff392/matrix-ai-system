@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Upload, Download, LogOut, Eye, EyeOff, Copy, Settings, User, Mail, Lock, Send, StopCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+<<<<<<< HEAD
 import { useSocketIO } from '@/hooks/useSocketIO'
 import { useLedBanner } from '@/hooks/useLedBanner'
 import { aiServiceClient } from '@/lib/ai-service-client'
@@ -18,6 +19,12 @@ import MemoryManager from '@/components/memory/MemoryManager'
 import LedBanner from '@/components/led-banner/LedBanner'
 import LedBannerSettings from '@/components/led-banner/LedBannerSettings'
 import FormDebug from '@/components/debug/FormDebug'
+=======
+import { useWebSocket } from '@/hooks/useWebSocket'
+import { aiServiceClient } from '@/lib/ai-service-client'
+import AuthModal from '@/components/auth/AuthModal'
+import MemoryManager from '@/components/memory/MemoryManager'
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
 interface Agent {
   id: string
@@ -335,7 +342,10 @@ const agents: Agent[] = [
 
 export default function MatrixInterface() {
   const { user, loading, signIn, logout } = useAuth()
+<<<<<<< HEAD
   const { config: ledConfig, updateConfig: updateLedConfig, saveConfig: saveLedConfig } = useLedBanner()
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
   const [agentList, setAgentList] = useState<Agent[]>(agents)
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', type: 'system', content: 'Système initialisé. Bienvenue dans la Matrix.', timestamp: new Date() },
@@ -351,7 +361,10 @@ export default function MatrixInterface() {
     timestamp: new Date()
   })
   const [showAuthModal, setShowAuthModal] = useState(false)
+<<<<<<< HEAD
   const [showDebugForm, setShowDebugForm] = useState(false)
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
   const [isTyping, setIsTyping] = useState(false)
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null)
   const [aiServiceInitialized, setAiServiceInitialized] = useState(false)
@@ -361,6 +374,7 @@ export default function MatrixInterface() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+<<<<<<< HEAD
   // Socket.IO configuration
   const socketConfig = {
     url: process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3000',
@@ -368,10 +382,19 @@ export default function MatrixInterface() {
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 3000,
+=======
+  // WebSocket configuration
+  const wsConfig = {
+    url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000/api/socketio',
+    reconnectAttempts: 5,
+    reconnectInterval: 3000,
+    cacheTTL: 300000,
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
     enableLogging: true
   }
 
   const {
+<<<<<<< HEAD
     isConnected: socketConnected,
     sendMessage: sendSocketMessage,
     lastMessage: lastSocketMessage,
@@ -380,6 +403,17 @@ export default function MatrixInterface() {
     disconnect: socketDisconnect,
     socket
   } = useSocketIO(socketConfig)
+=======
+    isConnected: wsConnected,
+    sendMessage: sendWsMessage,
+    lastMessage: lastWsMessage,
+    connectionError: wsError,
+    connect: wsConnect,
+    disconnect: wsDisconnect,
+    cacheStats,
+    messageQueueSize
+  } = useWebSocket(wsConfig)
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -428,19 +462,34 @@ export default function MatrixInterface() {
     }
   }, [user])
 
+<<<<<<< HEAD
   // Handle Socket.IO messages
   useEffect(() => {
     if (lastSocketMessage) {
       console.log('📨 Received Socket.IO message:', lastSocketMessage)
       
       switch (lastSocketMessage.type) {
+=======
+  // Handle WebSocket messages
+  useEffect(() => {
+    if (lastWsMessage) {
+      console.log('📨 Received WebSocket message:', lastWsMessage)
+      
+      switch (lastWsMessage.type) {
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
         case 'agent_response':
           const agentResponse: Message = {
             id: Date.now().toString(),
             type: 'agent',
+<<<<<<< HEAD
             content: lastSocketMessage.payload.response,
             timestamp: new Date(),
             agentId: lastSocketMessage.payload.agentId
+=======
+            content: lastWsMessage.payload.response,
+            timestamp: new Date(),
+            agentId: lastWsMessage.payload.agentId
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
           }
           setMessages(prev => [...prev, agentResponse])
           setIsTyping(false)
@@ -451,7 +500,11 @@ export default function MatrixInterface() {
           
         case 'typing_start':
           setIsTyping(true)
+<<<<<<< HEAD
           setTypingAgentId(lastSocketMessage.payload.agentId)
+=======
+          setTypingAgentId(lastWsMessage.payload.agentId)
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
           setReflectionEffect(true)
           break
           
@@ -462,6 +515,7 @@ export default function MatrixInterface() {
           break
           
         case 'system_status':
+<<<<<<< HEAD
           console.log('📊 System status update:', lastSocketMessage.payload)
           break
           
@@ -483,6 +537,29 @@ export default function MatrixInterface() {
       }])
     }
   }, [socketError])
+=======
+          console.log('📊 System status update:', lastWsMessage.payload)
+          break
+          
+        default:
+          console.log('📨 Unknown message type:', lastWsMessage.type)
+      }
+    }
+  }, [lastWsMessage])
+
+  // Handle WebSocket errors
+  useEffect(() => {
+    if (wsError) {
+      console.error('❌ WebSocket error:', wsError)
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        type: 'system',
+        content: `Erreur de connexion WebSocket: ${wsError.message}`,
+        timestamp: new Date()
+      }])
+    }
+  }, [wsError])
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -556,18 +633,32 @@ export default function MatrixInterface() {
     try {
       console.log(`🤖 Sending message to agent ${selectedAgent}:`, messageToSend)
 
+<<<<<<< HEAD
       // Send via Socket.IO if available
       if (socketConnected) {
         sendSocketMessage('chat_message', {
+=======
+      // Send via WebSocket if available
+      if (wsConnected) {
+        const messageId = sendWsMessage('chat_message', {
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
           agentId: selectedAgent,
           message: messageToSend,
           userId: user.uid,
           timestamp: Date.now()
+<<<<<<< HEAD
         })
         console.log('📤 Message sent via Socket.IO')
         setCurrentRequestId(Date.now().toString())
       } else {
         console.log('📤 Socket.IO not connected, using direct AI service')
+=======
+        }, { cache: true })
+        console.log('📤 Message sent via WebSocket:', messageId)
+        setCurrentRequestId(messageId)
+      } else {
+        console.log('📤 WebSocket not connected, using direct AI service')
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
         
         // Fallback to direct AI service
         const response = await aiServiceClient.sendMessage(selectedAgent, messageToSend)
@@ -678,6 +769,7 @@ export default function MatrixInterface() {
         </>
       )}
       
+<<<<<<< HEAD
       {/* LED Banner */}
       <div className="relative z-10">
         <LedBanner
@@ -690,6 +782,8 @@ export default function MatrixInterface() {
         />
       </div>
       
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
       {/* Header */}
       <header className="relative z-10 bg-black/80 backdrop-blur-sm border-b border-green-500/30 p-4">
         <div className="flex items-center justify-between">
@@ -720,6 +814,7 @@ export default function MatrixInterface() {
                 </div>
                 
                 {user.isAdmin && (
+<<<<<<< HEAD
                   <>
                     <Button
                       variant="ghost"
@@ -739,6 +834,17 @@ export default function MatrixInterface() {
                       🔧 Debug
                     </Button>
                   </>
+=======
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-green-400 hover:text-green-300 hover:bg-green-500/10"
+                    onClick={() => window.location.href = '/admin'}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Admin
+                  </Button>
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                 )}
                 
                 <Button
@@ -1038,19 +1144,26 @@ export default function MatrixInterface() {
         {/* Right Column - System Metrics & Memory */}
         <div className="col-span-3 bg-black/60 backdrop-blur-md border border-green-500/30 rounded-lg p-4">
           <Tabs defaultValue="metrics" className="h-full">
+<<<<<<< HEAD
             <TabsList className="grid w-full grid-cols-4 bg-black/40 border-green-500/30">
+=======
+            <TabsList className="grid w-full grid-cols-2 bg-black/40 border-green-500/30">
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
               <TabsTrigger value="metrics" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Métriques
               </TabsTrigger>
               <TabsTrigger value="memory" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Mémoire
               </TabsTrigger>
+<<<<<<< HEAD
               <TabsTrigger value="led-settings" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Bannière LED
               </TabsTrigger>
               <TabsTrigger value="debug" className="text-yellow-400 data-[state=active]:bg-yellow-500/20">
                 🔧 Debug
               </TabsTrigger>
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
             </TabsList>
             
             <TabsContent value="metrics" className="mt-4">
@@ -1062,14 +1175,25 @@ export default function MatrixInterface() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-green-400 font-semibold">CONNECTION</span>
                     <div className="flex items-center gap-2">
+<<<<<<< HEAD
                       <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
                       <span className="text-green-400 text-xs">
                         {socketConnected ? 'Socket.IO' : 'Direct'}
+=======
+                      <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                      <span className="text-green-400 text-xs">
+                        {wsConnected ? 'WebSocket' : 'Direct'}
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                       </span>
                     </div>
                   </div>
                   <div className="text-xs text-green-600 space-y-1">
+<<<<<<< HEAD
                     <div>Socket.IO: {socketConnected ? '✅ Connecté' : '❌ Déconnecté'}</div>
+=======
+                    <div>Cache: {cacheStats.size} entrées</div>
+                    <div>Queue: {messageQueueSize} messages</div>
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
                     <div>IA: {aiServiceInitialized ? '✅' : '❌'}</div>
                   </div>
                 </div>
@@ -1147,6 +1271,7 @@ export default function MatrixInterface() {
                 user={user}
               />
             </TabsContent>
+<<<<<<< HEAD
             
             <TabsContent value="led-settings" className="mt-0 h-[calc(100vh-180px)]">
               <LedBannerSettings
@@ -1162,6 +1287,8 @@ export default function MatrixInterface() {
                 <FormDebug />
               </div>
             </TabsContent>
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
           </Tabs>
         </div>
       </div>

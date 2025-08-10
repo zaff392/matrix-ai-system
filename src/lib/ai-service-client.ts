@@ -649,6 +649,7 @@ Tu n'es pas un simple assistant, mais un système intelligent d'orchestration qu
   public updateAgentConfig(agentId: string, updates: Partial<AgentConfig>): void {
     this.updateAgentConfig(agentId, updates)
   }
+<<<<<<< HEAD
 
   // Méthodes pour la gestion du style de LikeJust
   public updateLikeJustConfig(config: any): void {
@@ -689,6 +690,8 @@ Tu n'es pas un simple assistant, mais un système intelligent d'orchestration qu
     
     return { response }
   }
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 }
 
 // Exporter une instance singleton

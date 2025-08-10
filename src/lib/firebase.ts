@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
+<<<<<<< HEAD
 import { getAnalytics } from 'firebase/analytics'
 import { clientFirebaseConfig, getFirebaseDiagnostic } from './firebase-client'
 
@@ -56,6 +57,23 @@ try {
   logFirebaseDiagnostic()
   throw error
 }
+=======
+
+// Configuration Firebase - à remplacer avec vos propres identifiants
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "demo-project.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-project",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "demo-project.appspot.com",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:abcdef123456"
+}
+
+// Initialiser Firebase
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const googleProvider = new GoogleAuthProvider()
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
 // Fonctions d'authentification
 export const signInWithGoogle = async () => {
@@ -110,6 +128,7 @@ export const onAuthChange = (callback: (user: User | null) => void) => {
   return onAuthStateChanged(auth, callback)
 }
 
+<<<<<<< HEAD
 // Exporter les instances et la configuration
 export { auth, app, analytics }
 export { firebaseConfig }
@@ -148,3 +167,6 @@ export const getFirebaseStatus = () => {
 
 // Exporter la fonction de diagnostic
 export { getFirebaseDiagnostic }
+=======
+export { auth }
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0

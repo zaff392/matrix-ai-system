@@ -3,31 +3,42 @@
 import { useState, useEffect } from 'react'
 import { User } from 'firebase/auth'
 import { onAuthChange, signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword, logoutUser } from '@/lib/firebase'
+<<<<<<< HEAD
 import { UserService } from '@/lib/user-service'
 import { UserRole } from '@prisma/client'
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
 interface AuthUser {
   uid: string
   email: string | null
   displayName: string | null
   photoURL: string | null
+<<<<<<< HEAD
   role: UserRole
   isAdmin: boolean
   isSuperAdmin: boolean
   permissions: string[]
   isActive: boolean
+=======
+  isAdmin: boolean
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 }
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
+<<<<<<< HEAD
   const [dbUser, setDbUser] = useState<any>(null)
+=======
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
 
   useEffect(() => {
     // Charger les identifiants sauvegardés uniquement côté client
     const savedEmail = typeof window !== 'undefined' ? localStorage.getItem('savedEmail') : null
     const savedRemember = typeof window !== 'undefined' ? localStorage.getItem('rememberMe') === 'true' : false
 
+<<<<<<< HEAD
     const unsubscribe = onAuthChange(async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -121,6 +132,29 @@ export function useAuth() {
       } else {
         setUser(null)
         setDbUser(null)
+=======
+    const unsubscribe = onAuthChange((firebaseUser) => {
+      if (firebaseUser) {
+        // Pour la démo, on considère que l'utilisateur est admin si son email contient "admin"
+        const isAdmin = firebaseUser.email?.includes('admin') || false
+        
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          isAdmin
+        })
+
+        // Sauvegarder l'email si "se souvenir de moi" est coché
+        if (savedRemember && savedEmail) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('savedEmail', firebaseUser.email || '')
+          }
+        }
+      } else {
+        setUser(null)
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
         if (!savedRemember) {
           if (typeof window !== 'undefined') {
             localStorage.removeItem('savedEmail')
@@ -199,6 +233,7 @@ export function useAuth() {
     return false
   }
 
+<<<<<<< HEAD
   const hasPermission = async (resource: string, action: string) => {
     if (!user || !dbUser) return false
     
@@ -235,6 +270,10 @@ export function useAuth() {
   return {
     user,
     dbUser,
+=======
+  return {
+    user,
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
     loading,
     signIn,
     signUp,
@@ -242,8 +281,12 @@ export function useAuth() {
     logout,
     saveCredentials,
     getSavedEmail,
+<<<<<<< HEAD
     getRememberMe,
     hasPermission,
     refreshUser
+=======
+    getRememberMe
+>>>>>>> 3e66dbf5a30fb990a204ddd025e1904725ab65a0
   }
 }

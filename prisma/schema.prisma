@@ -1,0 +1,217 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  conversations Conversation[]
+  memories      Memory[]
+  
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Agent {
+  id              String   @id @default(cuid())
+  name            String
+  emoji           String
+  isActive        Boolean  @default(true)
+  systemPrompt    String
+  temperature     Float    @default(0.7)
+  maxTokens       Int      @default(1000)
+  allowedStyles   String   // JSON array of style IDs
+  primaryStyle    String?
+  forbiddenStyles String  // JSON array of style IDs
+  personalityTraits String // JSON array of traits
+  coordinationRole String
+  specialties     String   // JSON array of specialties
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  conversations Conversation[]
+  messages      Message[]
+  memories      Memory[]
+  
+  @@map("agents")
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  title     String?
+  userId    String
+  agentId   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent   Agent   @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages Message[]
+  
+  @@map("conversations")
+}
+
+model Message {
+  id           String   @id @default(cuid())
+  conversationId String
+  agentId      String?
+  role         String   // 'system', 'user', 'assistant'
+  content      String
+  metadata     String?  // JSON for additional data
+  createdAt    DateTime @default(now())
+  
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  agent        Agent?       @relation(fields: [agentId], references: [id])
+  
+  @@map("messages")
+}
+
+model Memory {
+  id          String   @id @default(cuid())
+  agentId     String
+  userId      String?
+  type        String   // 'conversation_summary', 'user_preference', 'learned_fact', 'context_info'
+  title       String
+  content     String
+  embedding   String?  // Vector embedding for semantic search
+  tags        String?  // JSON array of tags
+  importance  Int      @default(1) // 1-10 scale
+  accessCount Int      @default(0)
+  lastAccessed DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id])
+  
+  @@map("memories")
+  
+  @@index([agentId])
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// Modèle pour les permissions
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  resource    String   // 'users', 'agents', 'conversations', 'memories', 'system'
+  action      String   // 'create', 'read', 'update', 'delete', 'manage'
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  rolePermissions RolePermission[]
+  
+  @@map("permissions")
+}
+
+// Modèle pour les rôles et leurs permissions
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  
+  // Relations
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// Modèle pour les rôles personnalisés
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  level       Int      @default(0) // Niveau de permission (0 = user, 100 = admin, 200 = super_admin)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+  
+  @@map("roles")
+}
+
+// Modèle pour l'association utilisateurs-rôles
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+// Modèle pour les logs d'administration
+model AdminLog {
+  id          String   @id @default(cuid())
+  userId      String
+  action      String   // 'user_created', 'user_updated', 'user_deleted', 'role_changed', etc.
+  targetId    String?  // ID de la cible (user, agent, etc.)
+  targetType  String?  // 'user', 'agent', 'conversation', etc.
+  details     String?  // JSON with additional details
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+  
+  @@map("admin_logs")
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("posts")
+}

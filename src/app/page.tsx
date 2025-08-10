@@ -1035,8 +1035,7 @@ export default function MatrixInterface() {
                     </div>
                   </div>
                   <div className="text-xs text-green-600 space-y-1">
-                    <div>Cache: {cacheStats.size} entrées</div>
-                    <div>Queue: {messageQueueSize} messages</div>
+                    <div>Socket.IO: {socketConnected ? '✅ Connecté' : '❌ Déconnecté'}</div>
                     <div>IA: {aiServiceInitialized ? '✅' : '❌'}</div>
                   </div>
                 </div>

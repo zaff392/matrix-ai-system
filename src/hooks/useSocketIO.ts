@@ -63,7 +63,7 @@ export function useSocketIO(config: SocketIOConfig = {}): UseSocketIOReturn {
   // Initialize Socket.IO client
   useEffect(() => {
     if (!socketRef.current) {
-      log('Initializing Socket.IO client', { url })
+      console.log('🚀 Initializing Socket.IO client (NEW VERSION)', { url })
 
       socketRef.current = io(url, {
         autoConnect: false,
@@ -71,6 +71,7 @@ export function useSocketIO(config: SocketIOConfig = {}): UseSocketIOReturn {
         reconnectionAttempts,
         reconnectionDelay,
         reconnectionDelayMax,
+        path: '/api/socketio',
         transports: ['websocket', 'polling']
       })
 

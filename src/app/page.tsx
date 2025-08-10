@@ -11,9 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Upload, Download, LogOut, Eye, EyeOff, Copy, Settings, User, Mail, Lock, Send, StopCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useSocketIO } from '@/hooks/useSocketIO'
+import { useLedBanner } from '@/hooks/useLedBanner'
 import { aiServiceClient } from '@/lib/ai-service-client'
 import AuthModal from '@/components/auth/AuthModal'
 import MemoryManager from '@/components/memory/MemoryManager'
+import LedBanner from '@/components/led-banner/LedBanner'
+import LedBannerSettings from '@/components/led-banner/LedBannerSettings'
 
 interface Agent {
   id: string
@@ -331,6 +334,7 @@ const agents: Agent[] = [
 
 export default function MatrixInterface() {
   const { user, loading, signIn, logout } = useAuth()
+  const { config: ledConfig, updateConfig: updateLedConfig, saveConfig: saveLedConfig } = useLedBanner()
   const [agentList, setAgentList] = useState<Agent[]>(agents)
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', type: 'system', content: 'Système initialisé. Bienvenue dans la Matrix.', timestamp: new Date() },
@@ -672,6 +676,18 @@ export default function MatrixInterface() {
         </>
       )}
       
+      {/* LED Banner */}
+      <div className="relative z-10">
+        <LedBanner
+          text={ledConfig.text}
+          enabled={ledConfig.enabled}
+          color={ledConfig.color}
+          fontFamily={ledConfig.fontFamily}
+          style={ledConfig.style}
+          speed={ledConfig.speed}
+        />
+      </div>
+      
       {/* Header */}
       <header className="relative z-10 bg-black/80 backdrop-blur-sm border-b border-green-500/30 p-4">
         <div className="flex items-center justify-between">
@@ -1010,12 +1026,15 @@ export default function MatrixInterface() {
         {/* Right Column - System Metrics & Memory */}
         <div className="col-span-3 bg-black/60 backdrop-blur-md border border-green-500/30 rounded-lg p-4">
           <Tabs defaultValue="metrics" className="h-full">
-            <TabsList className="grid w-full grid-cols-2 bg-black/40 border-green-500/30">
+            <TabsList className="grid w-full grid-cols-3 bg-black/40 border-green-500/30">
               <TabsTrigger value="metrics" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Métriques
               </TabsTrigger>
               <TabsTrigger value="memory" className="text-green-400 data-[state=active]:bg-green-500/20">
                 Mémoire
+              </TabsTrigger>
+              <TabsTrigger value="led-settings" className="text-green-400 data-[state=active]:bg-green-500/20">
+                Bannière LED
               </TabsTrigger>
             </TabsList>
             
@@ -1111,6 +1130,14 @@ export default function MatrixInterface() {
                 agents={agentList}
                 selectedAgent={selectedAgent}
                 user={user}
+              />
+            </TabsContent>
+            
+            <TabsContent value="led-settings" className="mt-0 h-[calc(100vh-180px)]">
+              <LedBannerSettings
+                config={ledConfig}
+                onConfigChange={updateLedConfig}
+                onSave={saveLedConfig}
               />
             </TabsContent>
           </Tabs>

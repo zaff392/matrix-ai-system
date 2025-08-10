@@ -649,6 +649,46 @@ Tu n'es pas un simple assistant, mais un système intelligent d'orchestration qu
   public updateAgentConfig(agentId: string, updates: Partial<AgentConfig>): void {
     this.updateAgentConfig(agentId, updates)
   }
+
+  // Méthodes pour la gestion du style de LikeJust
+  public updateLikeJustConfig(config: any): void {
+    console.log('🎨 Updating LikeJust style configuration:', config)
+    // Émettre un événement pour la mise à jour en temps réel
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('likejust-style-config-updated', {
+        detail: { config }
+      })
+      window.dispatchEvent(event)
+    }
+  }
+
+  // Méthode pour tester l'application d'un style
+  public async testStyleApplication(params: {
+    context: string
+    primaryStyle: any
+    secondaryStyles: any[]
+    intensity: number
+    adaptability: number
+  }): Promise<{ response: string }> {
+    console.log('🧪 Testing style application:', params)
+    
+    // Simuler un délai de traitement
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Générer une réponse de test basée sur le style
+    const styleResponses = {
+      'professionnel': `En réponse à "${params.context}", je vous présente une analyse professionnelle et structurée. Cette approche méthodique permet d'aborder la question avec rigueur et précision.`,
+      'diplomatique': `Concernant "${params.context}", je propose une perspective équilibrée qui prend en compte les différents aspects de la situation. Cette approche diplomatique favorise le dialogue et la compréhension mutuelle.`,
+      'analytique': `Analyse de "${params.context}" : cette question mérite une examen détaillé. Décomposons les éléments constitutifs pour en comprendre toutes les dimensions et implications.`,
+      'amical': `Salut ! Pour "${params.context}", je pense qu'on peut trouver une solution super ensemble. Approchons ça de manière décontractée et efficace !`,
+      'créatif': `Imaginez "${params.context}" comme une toile vierge... Laissez-moi vous peindre une solution originale et innovante qui sort des sentiers battus !`
+    }
+    
+    const response = styleResponses[params.primaryStyle?.id] || 
+                   `Style appliqué à "${params.context}" avec une intensité de ${params.intensity}/10 et une adaptabilité de ${params.adaptability}/10.`
+    
+    return { response }
+  }
 }
 
 // Exporter une instance singleton

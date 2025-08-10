@@ -26,13 +26,17 @@ import {
   ArrowLeft,
   Crown,
   Brain,
-  Bot
+  Bot,
+  Zap,
+  Sparkles
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import LikejustManager from '@/components/admin/LikejustManager'
 import AgentsManager from '@/components/admin/AgentsManager'
 import UserManager from '@/components/admin/UserManager'
 import AdminDashboard from '@/components/admin/AdminDashboard'
+import BannerManager from '@/components/admin/BannerManager'
+import LikeJustStyleSelector from '@/components/admin/LikeJustStyleSelector'
 
 interface ApiKey {
   id: string
@@ -292,10 +296,14 @@ export default function AdminPage() {
       <div className="relative z-10 p-6">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-7 bg-black/60 border border-green-500/30">
+            <TabsList className="grid w-full grid-cols-9 bg-black/60 border border-green-500/30">
               <TabsTrigger value="dashboard" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Activity className="w-4 h-4" />
                 Dashboard
+              </TabsTrigger>
+              <TabsTrigger value="banner" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
+                <Zap className="w-4 h-4" />
+                Bannière
               </TabsTrigger>
               <TabsTrigger value="api-keys" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Key className="w-4 h-4" />
@@ -313,6 +321,10 @@ export default function AdminPage() {
                 <Bot className="w-4 h-4" />
                 Agents
               </TabsTrigger>
+              <TabsTrigger value="likejust-style" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
+                <Sparkles className="w-4 h-4" />
+                LikeJust Style
+              </TabsTrigger>
               <TabsTrigger value="system" className="flex items-center gap-2 data-[state=active]:bg-green-500/20">
                 <Activity className="w-4 h-4" />
                 Système
@@ -326,6 +338,11 @@ export default function AdminPage() {
             {/* Dashboard Tab */}
             <TabsContent value="dashboard" className="space-y-6">
               <AdminDashboard currentUserId={user?.uid} />
+            </TabsContent>
+
+            {/* Banner Tab */}
+            <TabsContent value="banner" className="space-y-6">
+              <BannerManager />
             </TabsContent>
 
             {/* API Keys Tab */}
@@ -470,6 +487,11 @@ export default function AdminPage() {
             {/* Agents Tab */}
             <TabsContent value="agents" className="space-y-6">
               <AgentsManager />
+            </TabsContent>
+
+            {/* LikeJust Style Tab */}
+            <TabsContent value="likejust-style" className="space-y-6">
+              <LikeJustStyleSelector />
             </TabsContent>
 
             {/* System Tab */}

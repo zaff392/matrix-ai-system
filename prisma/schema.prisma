@@ -17,6 +17,8 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
@@ -25,6 +27,12 @@ model User {
   memories      Memory[]
   
   @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
 }
 
 model Agent {
@@ -109,6 +117,90 @@ model Memory {
   @@index([agentId])
   @@index([userId])
   @@index([type])
+  @@index([createdAt])
+}
+
+// Modèle pour les permissions
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  resource    String   // 'users', 'agents', 'conversations', 'memories', 'system'
+  action      String   // 'create', 'read', 'update', 'delete', 'manage'
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  rolePermissions RolePermission[]
+  
+  @@map("permissions")
+}
+
+// Modèle pour les rôles et leurs permissions
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  
+  // Relations
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// Modèle pour les rôles personnalisés
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  level       Int      @default(0) // Niveau de permission (0 = user, 100 = admin, 200 = super_admin)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+  
+  @@map("roles")
+}
+
+// Modèle pour l'association utilisateurs-rôles
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+// Modèle pour les logs d'administration
+model AdminLog {
+  id          String   @id @default(cuid())
+  userId      String
+  action      String   // 'user_created', 'user_updated', 'user_deleted', 'role_changed', etc.
+  targetId    String?  // ID de la cible (user, agent, etc.)
+  targetType  String?  // 'user', 'agent', 'conversation', etc.
+  details     String?  // JSON with additional details
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+  
+  @@map("admin_logs")
+  
+  @@index([userId])
+  @@index([action])
   @@index([createdAt])
 }
 

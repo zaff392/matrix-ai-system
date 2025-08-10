@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Upload, Download, LogOut, Eye, EyeOff, Copy, Settings, User, Mail, Lock, Send, StopCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { useWebSocket } from '@/hooks/useWebSocket'
+import { useSocketIO } from '@/hooks/useSocketIO'
 import { aiServiceClient } from '@/lib/ai-service-client'
 import AuthModal from '@/components/auth/AuthModal'
 import MemoryManager from '@/components/memory/MemoryManager'
@@ -355,25 +355,25 @@ export default function MatrixInterface() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // WebSocket configuration
-  const wsConfig = {
-    url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000/api/socketio',
-    reconnectAttempts: 5,
-    reconnectInterval: 3000,
-    cacheTTL: 300000,
+  // Socket.IO configuration
+  const socketConfig = {
+    url: process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3000',
+    autoConnect: true,
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 3000,
     enableLogging: true
   }
 
   const {
-    isConnected: wsConnected,
-    sendMessage: sendWsMessage,
-    lastMessage: lastWsMessage,
-    connectionError: wsError,
-    connect: wsConnect,
-    disconnect: wsDisconnect,
-    cacheStats,
-    messageQueueSize
-  } = useWebSocket(wsConfig)
+    isConnected: socketConnected,
+    sendMessage: sendSocketMessage,
+    lastMessage: lastSocketMessage,
+    connectionError: socketError,
+    connect: socketConnect,
+    disconnect: socketDisconnect,
+    socket
+  } = useSocketIO(socketConfig)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -422,19 +422,19 @@ export default function MatrixInterface() {
     }
   }, [user])
 
-  // Handle WebSocket messages
+  // Handle Socket.IO messages
   useEffect(() => {
-    if (lastWsMessage) {
-      console.log('📨 Received WebSocket message:', lastWsMessage)
+    if (lastSocketMessage) {
+      console.log('📨 Received Socket.IO message:', lastSocketMessage)
       
-      switch (lastWsMessage.type) {
+      switch (lastSocketMessage.type) {
         case 'agent_response':
           const agentResponse: Message = {
             id: Date.now().toString(),
             type: 'agent',
-            content: lastWsMessage.payload.response,
+            content: lastSocketMessage.payload.response,
             timestamp: new Date(),
-            agentId: lastWsMessage.payload.agentId
+            agentId: lastSocketMessage.payload.agentId
           }
           setMessages(prev => [...prev, agentResponse])
           setIsTyping(false)
@@ -445,7 +445,7 @@ export default function MatrixInterface() {
           
         case 'typing_start':
           setIsTyping(true)
-          setTypingAgentId(lastWsMessage.payload.agentId)
+          setTypingAgentId(lastSocketMessage.payload.agentId)
           setReflectionEffect(true)
           break
           
@@ -456,27 +456,27 @@ export default function MatrixInterface() {
           break
           
         case 'system_status':
-          console.log('📊 System status update:', lastWsMessage.payload)
+          console.log('📊 System status update:', lastSocketMessage.payload)
           break
           
         default:
-          console.log('📨 Unknown message type:', lastWsMessage.type)
+          console.log('📨 Unknown message type:', lastSocketMessage.type)
       }
     }
-  }, [lastWsMessage])
+  }, [lastSocketMessage])
 
-  // Handle WebSocket errors
+  // Handle Socket.IO errors
   useEffect(() => {
-    if (wsError) {
-      console.error('❌ WebSocket error:', wsError)
+    if (socketError) {
+      console.error('❌ Socket.IO error:', socketError)
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         type: 'system',
-        content: `Erreur de connexion WebSocket: ${wsError.message}`,
+        content: `Erreur de connexion Socket.IO: ${socketError.message}`,
         timestamp: new Date()
       }])
     }
-  }, [wsError])
+  }, [socketError])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -550,18 +550,18 @@ export default function MatrixInterface() {
     try {
       console.log(`🤖 Sending message to agent ${selectedAgent}:`, messageToSend)
 
-      // Send via WebSocket if available
-      if (wsConnected) {
-        const messageId = sendWsMessage('chat_message', {
+      // Send via Socket.IO if available
+      if (socketConnected) {
+        sendSocketMessage('chat_message', {
           agentId: selectedAgent,
           message: messageToSend,
           userId: user.uid,
           timestamp: Date.now()
-        }, { cache: true })
-        console.log('📤 Message sent via WebSocket:', messageId)
-        setCurrentRequestId(messageId)
+        })
+        console.log('📤 Message sent via Socket.IO')
+        setCurrentRequestId(Date.now().toString())
       } else {
-        console.log('📤 WebSocket not connected, using direct AI service')
+        console.log('📤 Socket.IO not connected, using direct AI service')
         
         // Fallback to direct AI service
         const response = await aiServiceClient.sendMessage(selectedAgent, messageToSend)
@@ -1028,9 +1028,9 @@ export default function MatrixInterface() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-green-400 font-semibold">CONNECTION</span>
                     <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                      <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
                       <span className="text-green-400 text-xs">
-                        {wsConnected ? 'WebSocket' : 'Direct'}
+                        {socketConnected ? 'Socket.IO' : 'Direct'}
                       </span>
                     </div>
                   </div>
